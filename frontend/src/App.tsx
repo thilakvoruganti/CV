@@ -7,7 +7,7 @@ import "./App.css";
 
 function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename="/CV">
       <div className="app-shell">
         <NavBar />
         <main className="app-content">
