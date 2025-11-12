@@ -1,4 +1,5 @@
 from fastapi import FastAPI, UploadFile, File, Form
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 import os, uuid, time
@@ -8,6 +9,17 @@ from stitcher.pano import build_panorama   # you'll implement using your main.py
 from sift.compare import run_comparison    # your comp.py logic wrapped as a function
 
 app = FastAPI()
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+        "https://thilakvoruganti.github.io",
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 os.makedirs("uploads", exist_ok=True)
 os.makedirs("static", exist_ok=True)
 
