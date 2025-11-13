@@ -1,4 +1,4 @@
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { HashRouter, Route, Routes } from "react-router-dom";
 import NavBar from "./components/NavBar";
 import HomePage from "./pages/HomePage";
 import ImageStitchingPage from "./pages/ImageStitchingPage";
@@ -7,7 +7,7 @@ import "./App.css";
 
 function App() {
   return (
-    <BrowserRouter basename="/CV">
+    <HashRouter>
       <div className="app-shell">
         <NavBar />
         <main className="app-content">
@@ -18,7 +18,7 @@ function App() {
           </Routes>
         </main>
       </div>
-    </BrowserRouter>
+    </HashRouter>
   );
 }
 
