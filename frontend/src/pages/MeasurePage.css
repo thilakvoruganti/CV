@@ -1,0 +1,182 @@
+.measure-root {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  padding: 2rem;
+}
+
+.measure-header {
+  max-width: 720px;
+}
+
+.measure-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+.measure-panel,
+.measure-preview-card,
+.measure-results {
+  background: #ffffff;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.measure-panel .field-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.measure-panel .field-row.spaced {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.measure-preview {
+  position: relative;
+  border: 2px dashed #e2e8f0;
+  border-radius: 1rem;
+  min-height: 220px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  cursor: crosshair;
+}
+
+.measure-preview img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+.measure-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.measure-point {
+  position: absolute;
+  width: 32px;
+  height: 32px;
+  background: #2563eb;
+  color: #fff;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 8px 20px rgba(37, 99, 235, 0.35);
+}
+
+.measure-line {
+  position: absolute;
+  inset: 0;
+}
+
+.measure-line line {
+  stroke: #10b981;
+  stroke-width: 8;
+  stroke-linecap: round;
+}
+
+.measure-preview-card .placeholder,
+.measure-results .placeholder {
+  text-align: center;
+  color: #64748b;
+}
+
+.preview-hint {
+  color: #94a3b8;
+  font-size: 0.9rem;
+}
+
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 1rem;
+}
+
+.metrics-grid.compact {
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+}
+
+.metric-label {
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  color: #94a3b8;
+}
+
+.metric-value {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.metric-suffix {
+  font-size: 0.9rem;
+  margin-left: 0.15rem;
+  color: #475569;
+}
+
+.points-list {
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  background: #f8fafc;
+  padding: 0.75rem 1rem;
+  border-radius: 0.75rem;
+  color: #334155;
+}
+
+.annotated-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.annotated-card img {
+  border-radius: 0.75rem;
+  width: 100%;
+  max-height: 320px;
+  object-fit: cover;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.15);
+}
+
+.ghost-btn {
+  border: 1px solid #cbd5f5;
+  background: transparent;
+  padding: 0.4rem 0.9rem;
+  border-radius: 999px;
+  font-weight: 500;
+  color: #1e293b;
+}
+
+.ghost-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+@media (max-width: 768px) {
+  .measure-panel .field-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .measure-panel,
+  .measure-preview-card,
+  .measure-results {
+    padding: 1.25rem;
+  }
+
+  .measure-root {
+    padding: 1.5rem;
+  }
+}

@@ -3,6 +3,15 @@ import "./HomePage.css";
 
 const features = [
   {
+    title: "Measure Lab",
+    description:
+      "Pick two points on a calibrated capture and convert pixel distances into centimeter-accurate readings with annotated overlays.",
+    image:
+      "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&w=1200&q=80",
+    ctaLabel: "Open Measurement",
+    to: "/measure",
+  },
+  {
     title: "Image Stitching",
     description:
       "Fuse a sequence of overlapping photos into a seamless panorama with feature matching, homography alignment, and feather blending.",
@@ -21,13 +30,22 @@ const features = [
     to: "/sift",
   },
   {
-    title: "Mobile vs DSLR Alignment (Coming Soon)",
+    title: "Module 2 · Template Lab",
     description:
-      "Blend captures across devices, compensate for focal discrepancies, and export immersive scenes for AR pipelines.",
+      "Detect objects via correlation-based template matching, visualize Fourier blur recovery, and blur hits from your template database.",
     image:
-      "https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?auto=format&fit=crop&w=1200&q=80",
-    ctaLabel: "Stay tuned",
-    to: "/stitch",
+      "https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?auto=format&fit=crop&w=1200&q=80",
+    ctaLabel: "Open Module 2",
+    to: "/module2",
+  },
+  {
+    title: "Module 3 · Edge Lab",
+    description:
+      "Run gradient diagnostics, edge/corner detectors, and boundary extraction on your measurement dataset—directly in the browser.",
+    image:
+      "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1200&q=80",
+    ctaLabel: "Open Module 3",
+    to: "/module3",
   },
 ];
 

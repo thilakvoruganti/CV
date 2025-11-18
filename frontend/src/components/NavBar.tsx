@@ -11,8 +11,11 @@ export function NavBar() {
         <NavLink to="/" end>
           Home
         </NavLink>
+        <NavLink to="/measure">Measure Lab</NavLink>
         <NavLink to="/stitch">Image Stitching</NavLink>
         <NavLink to="/sift">SIFT Compare</NavLink>
+        <NavLink to="/module2">Module 2</NavLink>
+        <NavLink to="/module3">Module 3</NavLink>
       </nav>
     </header>
   );
