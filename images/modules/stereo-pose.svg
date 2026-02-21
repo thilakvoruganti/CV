@@ -1,0 +1,25 @@
+<svg width="1200" height="600" viewBox="0 0 1200 600" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#172554"/>
+      <stop offset="100%" stop-color="#0F766E"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="600" fill="url(#bg)"/>
+  <rect x="120" y="120" width="430" height="360" rx="22" fill="#0B132B" opacity="0.88"/>
+  <rect x="650" y="120" width="430" height="360" rx="22" fill="#0B132B" opacity="0.88"/>
+  <circle cx="335" cy="210" r="14" fill="#00F5A0"/>
+  <circle cx="865" cy="210" r="14" fill="#00F5A0"/>
+  <line x1="335" y1="224" x2="335" y2="300" stroke="#7DE3FF" stroke-width="8"/>
+  <line x1="335" y1="250" x2="290" y2="290" stroke="#7DE3FF" stroke-width="8"/>
+  <line x1="335" y1="250" x2="380" y2="290" stroke="#7DE3FF" stroke-width="8"/>
+  <line x1="335" y1="300" x2="300" y2="360" stroke="#7DE3FF" stroke-width="8"/>
+  <line x1="335" y1="300" x2="370" y2="360" stroke="#7DE3FF" stroke-width="8"/>
+  <line x1="865" y1="224" x2="865" y2="300" stroke="#7DE3FF" stroke-width="8"/>
+  <line x1="865" y1="250" x2="820" y2="290" stroke="#7DE3FF" stroke-width="8"/>
+  <line x1="865" y1="250" x2="910" y2="290" stroke="#7DE3FF" stroke-width="8"/>
+  <line x1="865" y1="300" x2="830" y2="360" stroke="#7DE3FF" stroke-width="8"/>
+  <line x1="865" y1="300" x2="900" y2="360" stroke="#7DE3FF" stroke-width="8"/>
+  <line x1="550" y1="300" x2="650" y2="300" stroke="#00D9F5" stroke-width="6" stroke-dasharray="12 10"/>
+  <text x="600" y="88" text-anchor="middle" fill="#EAF3FF" font-size="46" font-family="Arial, sans-serif">Stereo + Pose</text>
+</svg>

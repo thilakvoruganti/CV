@@ -1,0 +1,15 @@
+<svg width="1200" height="600" viewBox="0 0 1200 600" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#111827"/>
+      <stop offset="100%" stop-color="#1D4ED8"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="600" fill="url(#bg)"/>
+  <rect x="150" y="110" width="900" height="380" rx="24" fill="#0B1127" opacity="0.88"/>
+  <path d="M230 390 C360 180, 520 460, 700 230 C780 130, 900 200, 980 150" fill="none" stroke="#7DE3FF" stroke-width="7" stroke-dasharray="10 10"/>
+  <rect x="640" y="190" width="180" height="130" rx="12" fill="none" stroke="#00F5A0" stroke-width="8"/>
+  <circle cx="700" cy="230" r="10" fill="#00D9F5"/>
+  <circle cx="820" cy="320" r="10" fill="#00D9F5"/>
+  <text x="600" y="88" text-anchor="middle" fill="#EAF3FF" font-size="48" font-family="Arial, sans-serif">Object Tracking</text>
+</svg>

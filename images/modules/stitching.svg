@@ -1,0 +1,18 @@
+<svg width="1200" height="600" viewBox="0 0 1200 600" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0EA5E9"/>
+      <stop offset="100%" stop-color="#1E3A8A"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="600" fill="url(#sky)"/>
+  <rect x="130" y="110" width="300" height="380" rx="22" fill="#0F172A" opacity="0.92"/>
+  <rect x="450" y="110" width="300" height="380" rx="22" fill="#0F172A" opacity="0.92"/>
+  <rect x="770" y="110" width="300" height="380" rx="22" fill="#0F172A" opacity="0.92"/>
+  <path d="M160 390 L260 250 L340 320 L400 220 L400 460 L160 460 Z" fill="#34D399" opacity="0.8"/>
+  <path d="M480 390 L580 250 L660 320 L720 220 L720 460 L480 460 Z" fill="#34D399" opacity="0.8"/>
+  <path d="M800 390 L900 250 L980 320 L1040 220 L1040 460 L800 460 Z" fill="#34D399" opacity="0.8"/>
+  <rect x="430" y="110" width="20" height="380" fill="#00D9F5" opacity="0.45"/>
+  <rect x="750" y="110" width="20" height="380" fill="#00D9F5" opacity="0.45"/>
+  <text x="600" y="88" text-anchor="middle" fill="#EAF3FF" font-size="46" font-family="Arial, sans-serif">Panorama Stitching</text>
+</svg>
