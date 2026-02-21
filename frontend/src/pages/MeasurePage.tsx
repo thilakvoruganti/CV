@@ -149,7 +149,7 @@ export function MeasurePage() {
   return (
     <section className="measure-root">
       <header className="measure-header">
-        <p className="eyebrow">Module 1 · Measurement Lab</p>
+        <p className="eyebrow">Measurement Lab</p>
         <h1>Measure Real-World Distances</h1>
         <p>
           Upload a calibrated capture, click the two endpoints, and let the backend convert pixel gaps into metric distances using your

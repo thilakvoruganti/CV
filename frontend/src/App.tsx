@@ -6,6 +6,8 @@ import SiftComparePage from "./pages/SiftComparePage";
 import ModuleTwoPage from "./pages/ModuleTwoPage";
 import ModuleThreePage from "./pages/ModuleThreePage";
 import MeasurePage from "./pages/MeasurePage";
+import ModuleFivePage from "./pages/ModuleFivePage";
+import ModuleSevenPage from "./pages/ModuleSevenPage";
 import "./App.css";
 
 function App() {
@@ -20,6 +22,8 @@ function App() {
             <Route path="/sift" element={<SiftComparePage />} />
             <Route path="/module2" element={<ModuleTwoPage />} />
             <Route path="/module3" element={<ModuleThreePage />} />
+            <Route path="/module5" element={<ModuleFivePage />} />
+            <Route path="/module7" element={<ModuleSevenPage />} />
             <Route path="/measure" element={<MeasurePage />} />
           </Routes>
         </main>

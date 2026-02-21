@@ -28,19 +28,25 @@ export function NavBar() {
           Home
         </NavLink>
         <NavLink to="/measure" onClick={closeMenu}>
-          Measure Lab
-        </NavLink>
-        <NavLink to="/stitch" onClick={closeMenu}>
-          Image Stitching
-        </NavLink>
-        <NavLink to="/sift" onClick={closeMenu}>
-          SIFT Compare
+          Measurement
         </NavLink>
         <NavLink to="/module2" onClick={closeMenu}>
-          Module 2
+          Detection
         </NavLink>
         <NavLink to="/module3" onClick={closeMenu}>
-          Module 3
+          Edge Lab
+        </NavLink>
+        <NavLink to="/module5" onClick={closeMenu}>
+          Tracking
+        </NavLink>
+        <NavLink to="/module7" onClick={closeMenu}>
+          Stereo + Pose
+        </NavLink>
+        <NavLink to="/sift" onClick={closeMenu}>
+          Feature Match
+        </NavLink>
+        <NavLink to="/stitch" onClick={closeMenu}>
+          Stitching
         </NavLink>
       </nav>
     </header>

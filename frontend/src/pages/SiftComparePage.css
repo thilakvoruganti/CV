@@ -33,6 +33,26 @@
   line-height: 1.5;
 }
 
+.sift-guidelines {
+  border: 1px dashed rgba(108, 240, 255, 0.35);
+  background: rgba(11, 20, 46, 0.7);
+  border-radius: 1.25rem;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.5rem;
+  line-height: 1.45;
+  color: #cfd9ff;
+  font-size: 0.95rem;
+}
+
+.sift-guidelines strong {
+  display: block;
+  text-transform: uppercase;
+  letter-spacing: 0.3em;
+  font-size: 0.75rem;
+  color: #6cf0ff;
+  margin-bottom: 0.4rem;
+}
+
 .sift-form {
   display: flex;
   flex-direction: column;
@@ -64,6 +84,11 @@
   color: #eaf3ff;
   padding: 0.65rem 0.85rem;
   font-size: 1rem;
+}
+
+.field-hint {
+  font-size: 0.85rem;
+  color: #94a4c7;
 }
 
 .field-grid {

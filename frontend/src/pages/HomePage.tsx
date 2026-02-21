@@ -1,51 +1,64 @@
 import FeatureCard from "../components/FeatureCard";
 import "./HomePage.css";
 
+const moduleImage = (name: string) => `${process.env.PUBLIC_URL}/images/modules/${name}.svg`;
+
 const features = [
   {
-    title: "Measure Lab",
+    title: "Measurement",
     description:
       "Pick two points on a calibrated capture and convert pixel distances into centimeter-accurate readings with annotated overlays.",
-    image:
-      "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&w=1200&q=80",
+    image: moduleImage("measurement"),
     ctaLabel: "Open Measurement",
     to: "/measure",
   },
   {
-    title: "Image Stitching",
-    description:
-      "Fuse a sequence of overlapping photos into a seamless panorama with feature matching, homography alignment, and feather blending.",
-    image:
-      "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1200&q=80",
-    ctaLabel: "Launch Stitcher",
-    to: "/stitch",
-  },
-  {
-    title: "SIFT Feature Lab",
-    description:
-      "Experiment with handcrafted feature detectors, compare against OpenCV baselines, and visualize robust matches.",
-    image:
-      "https://images.unsplash.com/photo-1520607162513-77705c0f0d4a?auto=format&fit=crop&w=1200&q=80",
-    ctaLabel: "Compare detectors",
-    to: "/sift",
-  },
-  {
-    title: "Module 2 · Template Lab",
+    title: "Detection",
     description:
       "Detect objects via correlation-based template matching, visualize Fourier blur recovery, and blur hits from your template database.",
-    image:
-      "https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?auto=format&fit=crop&w=1200&q=80",
-    ctaLabel: "Open Module 2",
+    image: moduleImage("detection"),
+    ctaLabel: "Open Detection",
     to: "/module2",
   },
   {
-    title: "Module 3 · Edge Lab",
+    title: "Edge Lab",
     description:
       "Run gradient diagnostics, edge/corner detectors, and boundary extraction on your measurement dataset—directly in the browser.",
-    image:
-      "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1200&q=80",
-    ctaLabel: "Open Module 3",
+    image: moduleImage("edge-lab"),
+    ctaLabel: "Open Edge Lab",
     to: "/module3",
+  },
+  {
+    title: "Tracking",
+    description:
+      "Launch Shi–Tomasi + Lucas–Kanade tracking, inspect tracked ROIs, and visualize motion paths frame-by-frame using the updated backend.",
+    image: moduleImage("tracking"),
+    ctaLabel: "Open Tracking",
+    to: "/module5",
+  },
+  {
+    title: "Stereo + Pose",
+    description:
+      "Upload calibrated stereo pairs, lay down correspondences, and recover metric dimensions, diameters, and areas from disparity-driven 3D points.",
+    image: moduleImage("stereo-pose"),
+    ctaLabel: "Open Stereo + Pose",
+    to: "/module7",
+  },
+  {
+    title: "Feature Match",
+    description:
+      "Experiment with handcrafted feature detectors, compare against OpenCV baselines, and visualize robust matches.",
+    image: moduleImage("feature-match"),
+    ctaLabel: "Compare features",
+    to: "/sift",
+  },
+  {
+    title: "Stitching",
+    description:
+      "Fuse a sequence of overlapping photos into a seamless panorama with feature matching, homography alignment, and feather blending.",
+    image: moduleImage("stitching"),
+    ctaLabel: "Launch Stitcher",
+    to: "/stitch",
   },
 ];
 

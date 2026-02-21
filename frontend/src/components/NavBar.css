@@ -50,7 +50,7 @@
   color: #6cf0ff;
 }
 
-@media (max-width: 900px) {
+@media (max-width: 1240px) {
   .nav-root {
     padding: 0.85rem 1rem;
     flex-wrap: wrap;

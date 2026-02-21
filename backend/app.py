@@ -15,6 +15,8 @@ from objectdetection.service import (
     match_template_library,
     gaussian_blur_fourier,
 )
+from module5.service import process_track_request
+from module7.service import stereo_measure, pose_track_video
 
 app = FastAPI()
 app.add_middleware(
@@ -62,6 +64,12 @@ def _to_bool(value):
     if value is None:
         return False
     return str(value).strip().lower() in {"1", "true", "yes", "on"}
+
+
+def _to_int_or_none(value):
+    if value is None or str(value).strip() == "":
+        return None
+    return int(value)
 
 @app.post("/api/stitch")
 async def api_stitch(
@@ -329,3 +337,134 @@ async def api_object_library(
     else:
         result["blurred_url"] = None
     return JSONResponse({"ok": True, **result})
+
+
+@app.post("/api/module5/track")
+async def api_module5_track(
+    mode: str = Form(...),
+    frame: UploadFile = File(...),
+    session_id: str | None = Form(None),
+    marker_id: str | None = Form(None),
+    roi: str | None = Form(None),
+    sam2_masks: UploadFile | None = File(None),
+):
+    try:
+        frame_payload = await frame.read()
+        sam2_payload = await sam2_masks.read() if sam2_masks is not None else None
+        marker_id_val = _to_int_or_none(marker_id)
+        res = process_track_request(
+            mode=mode,
+            frame_payload=frame_payload,
+            out_root="static",
+            session_id=session_id,
+            marker_id=marker_id_val,
+            roi_payload=roi,
+            sam2_payload=sam2_payload,
+        )
+    except KeyError:
+        raise HTTPException(status_code=404, detail="Unknown session_id")
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc))
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=f"Tracking failed: {exc}")
+
+    return JSONResponse(
+        {
+            "session_id": res["session_id"],
+            "frame_url": _static_url(res["frame_path"]),
+            "metadata": res.get("metadata", {}),
+            "finished": bool(res.get("finished", False)),
+        }
+    )
+
+
+@app.post("/api/module7/stereo-measure")
+async def api_module7_stereo_measure(
+    left_image: UploadFile = File(...),
+    right_image: UploadFile = File(...),
+    fx: float = Form(...),
+    fy: float = Form(...),
+    cx: float = Form(...),
+    cy: float = Form(...),
+    baseline: float = Form(...),
+    shape: str = Form("rectangle"),
+    closed: bool = Form(True),
+    points_left: str = Form(...),
+    points_right: str = Form(...),
+):
+    left_path = _save_upload(left_image)
+    right_path = _save_upload(right_image)
+    try:
+        res = stereo_measure(
+            left_image_path=left_path,
+            right_image_path=right_path,
+            points_left_payload=points_left,
+            points_right_payload=points_right,
+            fx=float(fx),
+            fy=float(fy),
+            cx=float(cx),
+            cy=float(cy),
+            baseline=float(baseline),
+            closed=_to_bool(closed) or shape in {"rectangle", "polygon"},
+            out_dir="static",
+        )
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc))
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=f"Stereo measurement failed: {exc}")
+
+    return JSONResponse(
+        {
+            "ok": True,
+            "session_id": res["session_id"],
+            "points_3d": res["points_3d"],
+            "disparities": res["disparities"],
+            "edges_m": res["edges_m"],
+            "edges_cm": res["edges_cm"],
+            "closed": res["closed"],
+            "summary": res["summary"],
+            "point_count": res["point_count"],
+            "annotated_left_url": _static_url(res["annotated_left_path"]),
+            "annotated_right_url": _static_url(res["annotated_right_path"]),
+        }
+    )
+
+
+@app.post("/api/module7/pose")
+async def api_module7_pose(
+    video: UploadFile = File(...),
+    sample_stride: int = Form(1),
+    max_frames: int | None = Form(None),
+    detection_confidence: float = Form(0.5),
+    tracking_confidence: float = Form(0.5),
+):
+    video_path = _save_upload(video)
+    try:
+        res = pose_track_video(
+            video_path=video_path,
+            sample_stride=max(1, int(sample_stride)),
+            max_frames=int(max_frames) if max_frames is not None else None,
+            detection_confidence=float(max(0.0, min(1.0, detection_confidence))),
+            tracking_confidence=float(max(0.0, min(1.0, tracking_confidence))),
+            out_dir="static",
+        )
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc))
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=f"Pose tracking failed: {exc}")
+
+    return JSONResponse(
+        {
+            "ok": True,
+            "session_id": res["session_id"],
+            "annotated_video_url": _static_url(res["annotated_video_path"]),
+            "csv_url": _static_url(res["csv_path"]),
+            "processed_frames": res["processed_frames"],
+            "input_frames": res["input_frames"],
+            "fps": res["fps"],
+            "width": res["width"],
+            "height": res["height"],
+            "duration_sec": res["duration_sec"],
+            "sample_stride": res["sample_stride"],
+        }
+    )

@@ -1,3 +1,4 @@
+import axios from "axios";
 import { FormEvent, useState } from "react";
 import { api } from "../api/client";
 import ImageModal from "../components/ImageModal";
@@ -21,6 +22,23 @@ type SiftCompareResponse = {
 };
 
 const booleanField = (value: boolean) => (value ? "true" : "false");
+
+const FILE_LIMIT_BYTES = 4 * 1024 * 1024;
+const LIMITS = {
+  targetHeight: { min: 400, max: 1600 },
+  ratio: { min: 0.2, max: 0.98 },
+  ransacThresh: { min: 0.5, max: 20 },
+  ransacIters: { min: 100, max: 15000 },
+} as const;
+
+const clampNumber = (value: number, min: number, max: number) => Math.min(Math.max(value, min), max);
+const enforceRange = (value: number, range: { min: number; max: number }) => clampNumber(value, range.min, range.max);
+const parseInputNumber = (raw: string, fallback: number) => {
+  const parsed = Number(raw);
+  return Number.isFinite(parsed) ? parsed : fallback;
+};
+const describeFileSize = (bytes: number) => (bytes / (1024 * 1024)).toFixed(2).replace(/\.00$/, "");
+const fileLimitLabel = `${describeFileSize(FILE_LIMIT_BYTES)} MB`;
 
 export function SiftComparePage() {
   const [imageA, setImageA] = useState<File | null>(null);
@@ -46,13 +64,24 @@ export function SiftComparePage() {
       return;
     }
 
+    const oversized = [imageA, imageB].find((file) => file.size > FILE_LIMIT_BYTES);
+    if (oversized) {
+      setError(`${oversized.name || "Upload"} exceeds the ${fileLimitLabel} limit. Try a smaller image or downscale it first.`);
+      return;
+    }
+
+    const safeTargetHeight = Math.round(enforceRange(targetHeight, LIMITS.targetHeight));
+    const safeRatio = enforceRange(ratio, LIMITS.ratio);
+    const safeThresh = enforceRange(ransacThresh, LIMITS.ransacThresh);
+    const safeIters = Math.round(enforceRange(ransacIters, LIMITS.ransacIters));
+
     const formData = new FormData();
     formData.append("image1", imageA);
     formData.append("image2", imageB);
-    formData.append("target_height", String(targetHeight));
-    formData.append("ratio", String(ratio));
-    formData.append("ransac_thresh", String(ransacThresh));
-    formData.append("ransac_iters", String(ransacIters));
+    formData.append("target_height", String(safeTargetHeight));
+    formData.append("ratio", String(safeRatio));
+    formData.append("ransac_thresh", String(safeThresh));
+    formData.append("ransac_iters", String(safeIters));
     formData.append("root_sift", booleanField(rootSift));
     formData.append("cross_check", booleanField(crossCheck));
     formData.append("pipelines", pipelineMode);
@@ -67,8 +96,15 @@ export function SiftComparePage() {
         custom_inliers_url: data.custom_inliers_url ? new URL(data.custom_inliers_url, api.defaults.baseURL).toString() : undefined,
         opencv_inliers_url: data.opencv_inliers_url ? new URL(data.opencv_inliers_url, api.defaults.baseURL).toString() : undefined,
       });
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Comparison failed. Please retry with different inputs.");
+    } catch (err: unknown) {
+      if (axios.isAxiosError(err)) {
+        const detail = (err.response?.data as { detail?: string } | undefined)?.detail;
+        setError(detail ?? "Comparison failed. Please retry with different inputs.");
+      } else if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("Comparison failed. Please retry with different inputs.");
+      }
       setResult(null);
     } finally {
       setLoading(false);
@@ -87,32 +123,75 @@ export function SiftComparePage() {
           </p>
         </header>
 
+        <div className="sift-guidelines">
+          <strong>Render-safe limits</strong>
+          <p>
+            JPG or PNG uploads up to {fileLimitLabel} each. Target height clamps between {LIMITS.targetHeight.min} and {LIMITS.targetHeight.max} px.{" "}
+            Ratio test stays within {LIMITS.ratio.min.toFixed(2)}-{LIMITS.ratio.max.toFixed(2)}, RANSAC threshold {LIMITS.ransacThresh.min}-{LIMITS.ransacThresh.max} px,{" "}
+            and iterations {LIMITS.ransacIters.min}-{LIMITS.ransacIters.max}. Runs auto-clean after an hour to keep Render disk usage low.
+          </p>
+        </div>
+
         <form className="sift-form" onSubmit={handleSubmit}>
           <label className="field">
             <span>Image A</span>
             <input type="file" accept="image/*" onChange={(event) => setImageA(event.target.files?.[0] ?? null)} />
+            <span className="field-hint">JPG/PNG, up to {fileLimitLabel}.</span>
           </label>
           <label className="field">
             <span>Image B</span>
             <input type="file" accept="image/*" onChange={(event) => setImageB(event.target.files?.[0] ?? null)} />
+            <span className="field-hint">JPG/PNG, up to {fileLimitLabel}.</span>
           </label>
 
           <div className="field-grid">
             <label className="field">
               <span>Target height (px)</span>
-              <input type="number" min={400} max={2000} value={targetHeight} onChange={(e) => setTargetHeight(Number(e.target.value))} />
+              <input
+                type="number"
+                min={LIMITS.targetHeight.min}
+                max={LIMITS.targetHeight.max}
+                value={targetHeight}
+                onChange={(e) =>
+                  setTargetHeight(enforceRange(parseInputNumber(e.target.value, targetHeight), LIMITS.targetHeight))
+                }
+              />
             </label>
             <label className="field">
               <span>Ratio test</span>
-              <input type="number" step={0.01} min={0.1} max={0.99} value={ratio} onChange={(e) => setRatio(Number(e.target.value))} />
+              <input
+                type="number"
+                step={0.01}
+                min={LIMITS.ratio.min}
+                max={LIMITS.ratio.max}
+                value={ratio}
+                onChange={(e) => setRatio(enforceRange(parseInputNumber(e.target.value, ratio), LIMITS.ratio))}
+              />
             </label>
             <label className="field">
               <span>RANSAC threshold</span>
-              <input type="number" step={0.5} min={0.5} max={15} value={ransacThresh} onChange={(e) => setRansacThresh(Number(e.target.value))} />
+              <input
+                type="number"
+                step={0.5}
+                min={LIMITS.ransacThresh.min}
+                max={LIMITS.ransacThresh.max}
+                value={ransacThresh}
+                onChange={(e) =>
+                  setRansacThresh(enforceRange(parseInputNumber(e.target.value, ransacThresh), LIMITS.ransacThresh))
+                }
+              />
             </label>
             <label className="field">
               <span>RANSAC iterations</span>
-              <input type="number" min={100} max={20000} value={ransacIters} onChange={(e) => setRansacIters(Number(e.target.value))} />
+              <input
+                type="number"
+                min={LIMITS.ransacIters.min}
+                max={LIMITS.ransacIters.max}
+                value={ransacIters}
+                onChange={(e) =>
+                  setRansacIters(enforceRange(parseInputNumber(e.target.value, ransacIters), LIMITS.ransacIters))
+                }
+              />
             </label>
             <label className="field">
               <span>Pipeline</span>

@@ -2,7 +2,8 @@
   display: flex;
   flex-direction: column;
   gap: 2rem;
-  padding: clamp(1rem, 3vw, 2rem);
+  padding: clamp(1rem, 3vw, 2.5rem) min(5vw, 3rem);
+  color: #eaf3ff;
 }
 
 .measure-header {
@@ -18,13 +19,37 @@
 .measure-panel,
 .measure-preview-card,
 .measure-results {
-  background: #ffffff;
-  border-radius: 1rem;
+  background: rgba(4, 9, 23, 0.9);
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  border-radius: 1.25rem;
   padding: 1.5rem;
-  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+  box-shadow: 0 25px 50px rgba(2, 6, 23, 0.55);
   display: flex;
   flex-direction: column;
   gap: 1rem;
+}
+
+.measure-panel span,
+.measure-panel label,
+.measure-panel small,
+.measure-results p,
+.measure-preview-card h2 {
+  color: inherit;
+}
+
+.measure-panel input,
+.measure-panel select,
+.measure-panel textarea {
+  background: rgba(9, 17, 40, 0.9);
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  border-radius: 0.9rem;
+  color: #eaf3ff;
+  padding: 0.65rem 0.85rem;
+}
+
+.measure-panel input::placeholder,
+.measure-panel textarea::placeholder {
+  color: rgba(226, 232, 240, 0.65);
 }
 
 .measure-panel .field-grid {
@@ -43,7 +68,7 @@
 
 .measure-preview {
   position: relative;
-  border: 2px dashed #e2e8f0;
+  border: 2px dashed rgba(148, 163, 184, 0.45);
   border-radius: 1rem;
   min-height: 220px;
   display: flex;
@@ -94,7 +119,7 @@
 .measure-preview-card .placeholder,
 .measure-results .placeholder {
   text-align: center;
-  color: #64748b;
+  color: #94a3b8;
 }
 
 .preview-hint {
@@ -122,21 +147,21 @@
 .metric-value {
   font-size: 1.4rem;
   font-weight: 600;
-  color: #0f172a;
+  color: #f8fafc;
 }
 
 .metric-suffix {
   font-size: 0.9rem;
   margin-left: 0.15rem;
-  color: #475569;
+  color: #94a3b8;
 }
 
 .points-list {
   font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
-  background: #f8fafc;
+  background: rgba(9, 17, 40, 0.85);
   padding: 0.75rem 1rem;
   border-radius: 0.75rem;
-  color: #334155;
+  color: #e2e8f0;
 }
 
 .annotated-card {
@@ -150,16 +175,16 @@
   width: 100%;
   max-height: 320px;
   object-fit: cover;
-  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.15);
+  box-shadow: 0 10px 30px rgba(3, 7, 18, 0.55);
 }
 
 .ghost-btn {
-  border: 1px solid #cbd5f5;
+  border: 1px solid rgba(148, 163, 184, 0.45);
   background: transparent;
   padding: 0.4rem 0.9rem;
   border-radius: 999px;
   font-weight: 500;
-  color: #1e293b;
+  color: #e2e8f0;
 }
 
 .ghost-btn:disabled {

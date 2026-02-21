@@ -1,4 +1,4 @@
-import { FormEvent, useMemo, useState } from "react";
+import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
 import { api } from "../api/client";
 import ImageModal from "../components/ImageModal";
 import "./ImageStitchingPage.css";
@@ -9,6 +9,26 @@ type StitchResponse = {
   compare_url?: string | null;
   elapsed_sec?: number;
 };
+
+type DatasetEntry = {
+  name: string;
+  size: number;
+  modified: number;
+};
+
+type DatasetListResponse = {
+  ok: boolean;
+  entries: DatasetEntry[];
+  count: number;
+};
+
+const STITCH_MIN_IMAGES = 4;
+const STITCH_MAX_UPLOAD_IMAGES = 12;
+const STITCH_MAX_UPLOAD_BYTES = 5 * 1024 * 1024;
+const STITCH_MAX_UPLOAD_SIZE_LABEL = `${(STITCH_MAX_UPLOAD_BYTES / (1024 * 1024)).toFixed(0)} MB`;
+const STITCH_UPLOAD_LIMIT_SUMMARY = `${STITCH_MAX_UPLOAD_IMAGES} images (≤${STITCH_MAX_UPLOAD_SIZE_LABEL} each)`;
+const STITCH_MIN_WIDTH = 800;
+const STITCH_MAX_WIDTH = 2200;
 
 const resolveStaticUrl = (path: string) => {
   const fallbackBase = typeof window !== "undefined" ? window.location.origin : "/";
@@ -22,6 +42,10 @@ const resolveStaticUrl = (path: string) => {
 
 export function ImageStitchingPage() {
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+  const [imageSource, setImageSource] = useState<"upload" | "module3">("upload");
+  const [datasetEntries, setDatasetEntries] = useState<DatasetEntry[]>([]);
+  const [datasetLoading, setDatasetLoading] = useState(false);
+  const [datasetError, setDatasetError] = useState<string | null>(null);
   const [feature, setFeature] = useState("sift");
   const [maxWidth, setMaxWidth] = useState(1400);
   const [fitMode, setFitMode] = useState<"fit" | "scroll">("fit");
@@ -32,13 +56,47 @@ export function ImageStitchingPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [modalImage, setModalImage] = useState<{ src: string; title: string } | null>(null);
 
-  const exceedsMinRequirement = selectedFiles.length >= 4;
+  const meetsRequirement = imageSource === "module3"
+    ? datasetEntries.length >= STITCH_MIN_IMAGES
+    : selectedFiles.length >= STITCH_MIN_IMAGES;
+
+  const datasetSummary = useMemo(() => {
+    if (datasetLoading) {
+      return "Loading shared dataset...";
+    }
+    if (!datasetEntries.length) {
+      return "No dataset stored yet.";
+    }
+    if (datasetEntries.length === 1) {
+      return "1 stored image ready.";
+    }
+    return `${datasetEntries.length} stored images ready (up to ${STITCH_MAX_UPLOAD_IMAGES} used per run).`;
+  }, [datasetEntries, datasetLoading]);
 
   const fileSummary = useMemo(() => {
-    if (!selectedFiles.length) return "No files selected";
+    if (!selectedFiles.length) {
+      return `No files selected. Limit ${STITCH_UPLOAD_LIMIT_SUMMARY}.`;
+    }
     const list = selectedFiles.map((f) => f.name).join(", ");
-    return `${selectedFiles.length} image${selectedFiles.length > 1 ? "s" : ""}: ${list}`;
+    return `${selectedFiles.length} image${selectedFiles.length > 1 ? "s" : ""}: ${list} • limit ${STITCH_UPLOAD_LIMIT_SUMMARY}.`;
   }, [selectedFiles]);
+
+  const fetchDataset = useCallback(async () => {
+    setDatasetLoading(true);
+    try {
+      const { data } = await api.get<DatasetListResponse>("/api/module3/dataset");
+      setDatasetEntries(data.entries ?? []);
+      setDatasetError(null);
+    } catch (err) {
+      setDatasetError(err instanceof Error ? err.message : "Unable to load dataset library.");
+    } finally {
+      setDatasetLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    void fetchDataset();
+  }, [fetchDataset]);
 
   const handleFiles = (files: FileList | null) => {
     if (!files) {
@@ -53,13 +111,37 @@ export function ImageStitchingPage() {
     evt.preventDefault();
     setError(null);
 
-    if (!exceedsMinRequirement) {
-      setError("Please select at least 4 overlapping images.");
+    if (imageSource === "module3") {
+      if (!datasetEntries.length) {
+        setError("Shared dataset is empty. Upload frames there first.");
+        return;
+      }
+      if (datasetEntries.length < STITCH_MIN_IMAGES) {
+        setError(`Shared dataset needs at least ${STITCH_MIN_IMAGES} images.`);
+        return;
+      }
+    } else if (selectedFiles.length < STITCH_MIN_IMAGES) {
+      setError(`Please select at least ${STITCH_MIN_IMAGES} overlapping images.`);
       return;
     }
 
+    if (imageSource === "upload") {
+      if (selectedFiles.length > STITCH_MAX_UPLOAD_IMAGES) {
+        setError(`Upload up to ${STITCH_MAX_UPLOAD_IMAGES} images per run.`);
+        return;
+      }
+      const oversize = selectedFiles.find((file) => file.size > STITCH_MAX_UPLOAD_BYTES);
+      if (oversize) {
+        setError(`${oversize.name} exceeds the ${STITCH_MAX_UPLOAD_SIZE_LABEL} limit.`);
+        return;
+      }
+    }
+
     const formData = new FormData();
-    selectedFiles.forEach((file) => formData.append("images", file));
+    formData.append("image_source", imageSource);
+    if (imageSource === "upload") {
+      selectedFiles.forEach((file) => formData.append("images", file));
+    }
     formData.append("feature", feature);
     formData.append("max_width", String(maxWidth));
 
@@ -88,16 +170,40 @@ export function ImageStitchingPage() {
           <p className="stitch-eyebrow">Panorama Lab</p>
           <h1>Image Stitching</h1>
           <p className="stitch-subhead">
-            Upload at least four overlapping photos captured from a single vantage point. We will detect features using OpenCV, align every
-            frame, and blend the result into a high-resolution panorama powered by the FastAPI backend.
+            Upload between {STITCH_MIN_IMAGES} and {STITCH_MAX_UPLOAD_IMAGES} overlapping photos (≤{STITCH_MAX_UPLOAD_SIZE_LABEL} each) captured from a
+            single vantage point. We detect features with OpenCV, align every frame, and blend the result into a high-resolution panorama powered by
+            the FastAPI backend.
           </p>
         </header>
 
         <form className="stitch-form" onSubmit={handleSubmit}>
           <label className="field">
+            <span>Image Source</span>
+            <select value={imageSource} onChange={(event) => setImageSource(event.target.value as "upload" | "module3")}>
+              <option value="upload">Upload from this device</option>
+              <option value="module3" disabled={!datasetEntries.length}>
+                Shared dataset {datasetEntries.length ? `(${datasetEntries.length} images)` : "(empty)"}
+              </option>
+            </select>
+            <small>{imageSource === "module3" ? datasetSummary : "Files stay local until you submit."}</small>
+            {datasetError && <small className="field-hint--error">{datasetError}</small>}
+            {imageSource === "module3" && !datasetLoading && !datasetEntries.length && (
+              <small className="field-hint--error">Upload dataset images in Edge Lab first.</small>
+            )}
+          </label>
+
+          <label className="field">
             <span>Upload images (min 4)</span>
-            <input type="file" accept="image/*" multiple onChange={(event) => handleFiles(event.target.files)} />
-            <small className={exceedsMinRequirement ? "" : "field-hint--error"}>{fileSummary}</small>
+            <input
+              type="file"
+              accept="image/*"
+              multiple
+              disabled={imageSource === "module3"}
+              onChange={(event) => handleFiles(event.target.files)}
+            />
+            <small className={imageSource === "upload" && !meetsRequirement ? "field-hint--error" : ""}>
+              {imageSource === "module3" ? "Uploads are disabled when using the shared dataset." : fileSummary}
+            </small>
           </label>
 
           <div className="field-grid">
@@ -105,11 +211,12 @@ export function ImageStitchingPage() {
               <span>Max width (px)</span>
               <input
                 type="number"
-                min={800}
-                max={2400}
+                min={STITCH_MIN_WIDTH}
+                max={STITCH_MAX_WIDTH}
                 value={maxWidth}
                 onChange={(event) => setMaxWidth(Number(event.target.value))}
               />
+              <small>Backend clamps this between {STITCH_MIN_WIDTH}px and {STITCH_MAX_WIDTH}px.</small>
             </label>
             <label className="field">
               <span>Feature Detector</span>
