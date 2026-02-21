@@ -86,19 +86,19 @@ export function ModuleFivePage() {
 
   const canDefineRoi = mode === "of" && videoReady;
 
-  const stopInterval = () => {
+  const stopInterval = useCallback(() => {
     if (intervalRef.current) {
       window.clearInterval(intervalRef.current);
       intervalRef.current = null;
     }
-  };
+  }, []);
 
-  const stopStreaming = () => {
+  const stopStreaming = useCallback(() => {
     stopInterval();
     setStreaming(false);
-  };
+  }, [stopInterval]);
 
-  const stopCamera = () => {
+  const stopCamera = useCallback(() => {
     stopStreaming();
     if (streamRef.current) {
       streamRef.current.getTracks().forEach((track) => track.stop());
@@ -108,13 +108,13 @@ export function ModuleFivePage() {
       videoRef.current.srcObject = null;
     }
     setVideoReady(false);
-  };
+  }, [stopStreaming]);
 
   useEffect(() => {
     return () => {
       stopCamera();
     };
-  }, []);
+  }, [stopCamera]);
 
   const startCamera = async () => {
     try {
