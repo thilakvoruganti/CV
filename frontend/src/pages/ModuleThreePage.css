@@ -1,5 +1,5 @@
 .module3-root {
-  padding: 2.5rem min(5vw, 3rem);
+  padding: clamp(1rem, 3vw, 2.5rem) min(5vw, 3rem);
   color: #eaf3ff;
 }
 
@@ -91,4 +91,15 @@
   border-radius: 0.5rem;
   border: 1px solid rgba(255, 255, 255, 0.08);
   background: #01030b;
+}
+
+@media (max-width: 900px) {
+  .module3-root {
+    padding: 1rem;
+  }
+
+  .upload-panel,
+  .module3-grid article {
+    padding: 1rem;
+  }
 }

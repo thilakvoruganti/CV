@@ -1,8 +1,8 @@
 .stitch-root {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 2rem;
-  padding: 2.5rem min(5vw, 3rem);
+  padding: clamp(1rem, 3vw, 2.5rem) min(5vw, 3rem);
   color: #eaf3ff;
 }
 
@@ -206,4 +206,17 @@
   margin-bottom: 0.75rem;
   color: #c3d5ff;
   font-weight: 500;
+}
+
+@media (max-width: 900px) {
+  .stitch-root {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+    padding: 1rem;
+  }
+
+  .stitch-panel,
+  .stitch-results {
+    padding: 1.2rem;
+  }
 }

@@ -1,5 +1,5 @@
 .module2-root {
-  padding: 2rem;
+  padding: clamp(1rem, 3vw, 2rem);
   display: flex;
   flex-direction: column;
   gap: 2rem;
@@ -11,7 +11,7 @@
 
 .module2-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 1.5rem;
 }
 
@@ -169,7 +169,7 @@
 
 @media (max-width: 768px) {
   .module2-root {
-    padding: 1.5rem;
+    padding: 1rem;
   }
 
   .module2-card {

@@ -1,8 +1,8 @@
 .sift-root {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 2rem;
-  padding: 2.5rem min(5vw, 3rem);
+  padding: clamp(1rem, 3vw, 2.5rem) min(5vw, 3rem);
   color: #eaf3ff;
 }
 
@@ -142,4 +142,17 @@
   width: 100%;
   display: block;
   border-radius: 0.5rem;
+}
+
+@media (max-width: 900px) {
+  .sift-root {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+    padding: 1rem;
+  }
+
+  .sift-panel,
+  .sift-results {
+    padding: 1.2rem;
+  }
 }

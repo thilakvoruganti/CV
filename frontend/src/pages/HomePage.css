@@ -1,5 +1,5 @@
 .home-root {
-  padding: 2.5rem min(5vw, 3rem);
+  padding: clamp(1rem, 3vw, 2.5rem) min(5vw, 3rem);
   color: #eaf3ff;
 }
 
